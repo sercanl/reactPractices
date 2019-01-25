@@ -92,7 +92,7 @@ class App extends Component {
   render() {
     return (
         <div className="App">
-
+            <Header />
             <table>
                 {
                     this.state.cities.map(
@@ -116,6 +116,7 @@ class App extends Component {
 
             </form>
             <button onClick={this.deleteAllDocuments}>Delete all</button>
+            <Footer />
         </div>
     );
   }

@@ -4,7 +4,7 @@ const Footer = () => {
 
         return (
             <div className="App">
-            footer
+            Footer Component
             </div>
         );
 };

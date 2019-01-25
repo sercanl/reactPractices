@@ -6,7 +6,7 @@ class Header extends Component {
             <div className="nav has-shadow">
                 <div className="container">
                     <div className="nav-left">
-                        Header
+                        Header Component
                     </div>
                 </div>
             </div>
