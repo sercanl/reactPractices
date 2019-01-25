@@ -49,7 +49,7 @@ class App extends Component {
   deleteAllDocuments = e => {
     const db = fire.firestore();
     db.settings({ timestampsInSnapshots: true });
-
+    var that = this;
     db.collection("norwegianCities").get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
             db.collection("norwegianCities").doc(doc.id).delete().then(function() {
@@ -58,8 +58,9 @@ class App extends Component {
                 console.error("Error removing document: ", error);
             });
         });
+    }).then(function() {
+        that.loadCities();
     });
-    this.loadCities();
   }
   deleteCity = e =>  {
     const db = fire.firestore();
@@ -115,7 +116,6 @@ class App extends Component {
 
             </form>
             <button onClick={this.deleteAllDocuments}>Delete all</button>
-            <button onClick={this.loadCities}>Show</button>
         </div>
     );
   }
