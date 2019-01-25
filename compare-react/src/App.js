@@ -62,21 +62,23 @@ class App extends Component {
         that.loadCities();
     });
   }
-  deleteCity = e =>  {
+  deleteCity = (cityID) => e => {
     const db = fire.firestore();
     db.settings({ timestampsInSnapshots: true });
-    console.log(e.target.value );
-    /*
+    var that = this;
     db.collection("norwegianCities").get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
-            db.collection("norwegianCities").doc(doc.id).delete().then(function() {
-                console.log("Document successfully deleted!");
-            }).catch(function(error) {
-                console.error("Error removing document: ", error);
-            });
+            if (cityID === doc.data().id) {
+                db.collection("norwegianCities").doc(doc.id).delete().then(function() {
+                    console.log("City '" + doc.data().by + "' deleted.");
+                }).catch(function(error) {
+                    console.error("Error removing document: ", error);
+                });
+            }
         });
+    }).then(function() {
+        that.loadCities();
     });
-    */
   }
   addCity = e => {
     e.preventDefault();
@@ -98,7 +100,7 @@ class App extends Component {
                     this.state.cities.map(
                         city => (
                             <tr  key={city.id}>
-                                <td onClick={this.deleteCity} value={city.id}>Delete </td>
+                                <td onClick={this.deleteCity(city.id)} value={city.id}>Delete </td>
                                 <td> {city.by} </td>
                                 <td> {city.innbyggere} </td>
                             </tr>
