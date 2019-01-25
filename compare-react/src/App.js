@@ -92,7 +92,7 @@ class App extends Component {
     };
   }
   render() {
-    this.loadCities();
+    //this.loadCities();
     return (
         <div className="App">
 
