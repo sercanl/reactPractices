@@ -21,7 +21,7 @@ class App extends Component {
       this.deleteCity.bind(this)
   }
   componentDidMount() {
-
+      this.loadCities();
   }
 
   loadCities = () =>  {
@@ -59,6 +59,7 @@ class App extends Component {
             });
         });
     });
+    this.loadCities();
   }
   deleteCity = e =>  {
     const db = fire.firestore();
@@ -85,14 +86,9 @@ class App extends Component {
         by: this.state.by,
         innbyggere: this.state.innbyggere
     });
-    this.state = {
-        id: "",
-        by: "",
-        innbyggere: ""
-    };
+    this.loadCities();
   }
   render() {
-    //this.loadCities();
     return (
         <div className="App">
 
