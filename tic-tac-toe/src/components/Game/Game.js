@@ -14,7 +14,8 @@ class Game extends React.Component {
                 }
             ],
             stepNumber: 0,
-            xIsNext: true
+            xIsNext: true,
+            sortASC: true
         }
     }
 
@@ -53,13 +54,31 @@ class Game extends React.Component {
         });
     }
 
+    toggleSort() {
+        this.setState({
+            sortASC: !this.state.sortASC
+        });
+    }
+
     render() {
 
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
 
-        const moves = history.map((step, move) => {
+        let historyArr;
+        if (!this.state.sortASC) {
+            historyArr = history.slice(0).reverse();
+        }
+        else {
+            historyArr = history.slice(0);
+        }
+
+        const moves = historyArr.map((step, move) => {
+            if (!this.state.sortASC) {
+                move = historyArr.length - move;
+                move--;
+            }
             const desc = move ?
             'Go to move #' + move + " at " + step.row + "," + step.col:
             'Go to game start';
@@ -68,6 +87,7 @@ class Game extends React.Component {
             if (this.state.stepNumber === move && history.length > move + 1) {
                 selectedMove = "selectedMove";
             }
+
             return (
                 <li key={move}>
                     <button onClick={() => this.jumpTo(move)} className={selectedMove}>{desc}</button>
@@ -83,6 +103,14 @@ class Game extends React.Component {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
+        let sortButton = "&darr;";
+        if (this.state.sortASC) {
+            sortButton = <button onClick={() => this.toggleSort()}>&darr;</button>;
+        }
+        else {
+            sortButton = <button onClick={() => this.toggleSort()}>&uarr;</button>;
+        }
+
         return (
             <div className="game">
                 <div className="game-board">
@@ -92,8 +120,8 @@ class Game extends React.Component {
                     />
                 </div>
                 <div className="game-info">
-                    <div>{status}</div>
-                    <ol>{moves}</ol>
+                    <div>{sortButton} {status}</div>
+                    <ul>{moves}</ul>
                 </div>
             </div>
         );
