@@ -100,7 +100,19 @@ class Game extends React.Component {
             status = "Winner: " + winner.name;
         }
         else {
-            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+            let gameIsDraw = true;
+            for (let i = 0; i < current.squares.length; i++) {
+                if (current.squares[i] === null) {
+                    gameIsDraw = false;
+                    break;
+                }
+            }
+            if (gameIsDraw) {
+                status = "Nobody wins";
+            }
+            else {
+                status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+            }
         }
 
         let sortButton = "&darr;";
@@ -158,5 +170,6 @@ function calculateWinner(squares) {
             return winner;
         }
     }
+
     return null;
 }
