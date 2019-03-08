@@ -118,7 +118,7 @@ class App extends Component {
 
             </form>
             <button onClick={this.deleteAllDocuments}>Delete all</button>
-            <Footer />
+            <button onClick={this.loadCities}>Show</button>
         </div>
     );
   }
