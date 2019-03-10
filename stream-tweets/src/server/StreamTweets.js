@@ -23,7 +23,7 @@ module.exports = (app, io) => {
             });
 
             stream.on('error', (error) => {
-                //console.log(error);
+                console.log(error);
             });
 
             twitterStream = stream;
@@ -33,12 +33,6 @@ module.exports = (app, io) => {
     // EMITTER
     const sendMessage = (msg) => {
 
-        if (!msg.text.toLowerCase().includes(app.locals.searchString.toLowerCase())) {
-            console.log("DOES NOT CONTAIN:", app.locals.searchString);
-            console.log(msg.text);
-            return;
-        }
-
         if (itIsARetweet(msg.text) && !app.locals.showRetweets) {
             return;
         }
@@ -46,8 +40,7 @@ module.exports = (app, io) => {
         if (!itIsARetweet(msg.text) && !app.locals.showTweets) {
             return;
         }
-        //console.log(msg.text);
-        //console.log(app.locals.searchString);
+        console.log(msg.text);
         socketConn.emit("tweets", msg);
     };
 
@@ -58,13 +51,13 @@ module.exports = (app, io) => {
     // CONNECT
     io.on("connection", socket => {
         socketConn = socket;
-        stream();
+        //stream();
         socket.on("connection", () => console.log("Client connected"));
         socket.on("disconnect", () => console.log("Client disconnected"));
     });
 
     // SET SHOW TWEETS
-    app.post('/setShowTweets', (req, res) => {
+    app.post('/setShowTweets', (req) => {
 
         switch(req.body.option) {
             case "showTweets":
@@ -77,16 +70,19 @@ module.exports = (app, io) => {
 
         console.log("showTweets:", app.locals.showTweets);
         console.log("showRetweets:", app.locals.showRetweets);
-        twitterStream.destroy();
-        twitter.destroy();
+        if (twitterStream) {
+            twitterStream.destroy();
+        }
         stream();
     });
 
     // EDIT SEARCH WORD
-    app.post('/setSearchString', (req, res) => {
+    app.post('/setSearchString', (req) => {
         app.locals.searchString = req.body.str;
         console.log("Search string edited to =>", app.locals.searchString);
-        twitterStream.destroy();
+        if (twitterStream) {
+            twitterStream.destroy();
+        }
         stream();
     });
 };
