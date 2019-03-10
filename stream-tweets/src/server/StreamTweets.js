@@ -44,7 +44,8 @@ module.exports = (app, io) => {
         if (!itIsARetweet(msg.text) && !app.locals.showTweets) {
             return;
         }
-        //console.log(msg.text);
+        console.log(msg.text);
+        console.log(app.locals.searchString);
         socketConn.emit("tweets", msg);
     };
 
@@ -75,7 +76,8 @@ module.exports = (app, io) => {
         console.log("showTweets:", app.locals.showTweets);
         console.log("showRetweets:", app.locals.showRetweets);
         twitterStream.destroy();
-        stream();
+        res.send("stream stopped successfully");
+        setTimeout(function(){ stream(); }, 300);
     });
 
     // EDIT SEARCH WORD
@@ -83,7 +85,7 @@ module.exports = (app, io) => {
         app.locals.searchString = req.body.str;
         console.log("Search string edited to =>", app.locals.searchString);
         twitterStream.destroy();
-        stream();
+        setTimeout(function(){ stream(); }, 300);
     });
 
     // PAUSE

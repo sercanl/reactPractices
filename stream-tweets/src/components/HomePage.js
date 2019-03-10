@@ -1,10 +1,9 @@
 import React from 'react';
-import { CSSTransitionGroup } from 'react-transition-group';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import socketIOClient from "socket.io-client";
-import CardComponent from './CardComponent';
+import TweetBox from './TweetBox';
 
-
-class TweetList extends React.Component {
+class HomePage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -28,7 +27,8 @@ class TweetList extends React.Component {
     handleOptionChange(e) {
         const name = e.target.name;
         this.setState({
-            [name]: e.target.checked
+            [name]: e.target.checked,
+            items: []
         });
         fetch("/setShowTweets",
             {
@@ -45,6 +45,7 @@ class TweetList extends React.Component {
 
     handleKeyPress(e) {
         if (e.key === 'Enter') {
+            this.setState({ items: [] });
             this.handleResume();
         }
     }
@@ -91,18 +92,30 @@ class TweetList extends React.Component {
     }
 
     render() {
-        //let items = this.state.items;
+        let items = this.state.items;
+
+        let cards = <ReactCSSTransitionGroup
+            transitionName="example"
+            transitionEnterTimeout={5000}
+            transitionAppear={true}
+            transitionAppearTimeout={2000}
+            transitionLeaveTimeout={900}>
+
+            <div>babybybybyb</div>
+        </ReactCSSTransitionGroup>;
+
         return (
             <div className="row">
-                <div>
+                <div className="filterSection">
                     <input type="text"
                            name="searchString"
+                           className="searchString"
                            value={this.state.searchString}
                            onChange={this.handleTextEditing}
                            onKeyPress={this.handleKeyPress}
                     />
                     <br />
-                    <label>
+                    <label className="showTweets">
                         <input type="checkbox"
                                name="showTweets"
                                checked={this.state.showTweets}
@@ -110,7 +123,7 @@ class TweetList extends React.Component {
                         />
                         Show Tweets
                     </label>
-                    <label>
+                    <label className="showRetweets">
                         <input type="checkbox"
                                name="showRetweets"
                                checked={this.state.showRetweets}
@@ -119,9 +132,14 @@ class TweetList extends React.Component {
                         Show Retweets
                     </label>
                 </div>
+                <div className="streamSection">
+                    {items.map((x, i) =>
+                        <TweetBox key={i} data={x} />
+                    )}
+                </div>
             </div>
         );
     }
 }
 
-export default TweetList;
+export default HomePage;
