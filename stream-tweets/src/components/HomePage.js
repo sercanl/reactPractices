@@ -11,12 +11,12 @@ class HomePage extends React.Component {
             searchString: "javascript",
             showTweets: true,
             showRetweets: false,
+            tweetBufferLimit: 7
         };
 
         this.handleTextEditing = this.handleTextEditing.bind(this);
         this.handleOptionChange = this.handleOptionChange.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
-        this.handleResume = this.handleResume.bind(this);
     }
 
     handleTextEditing(e) {
@@ -45,13 +45,13 @@ class HomePage extends React.Component {
     handleKeyPress(e) {
         if (e.key === 'Enter') {
             this.setState({ items: [] });
-            this.handleResume();
+            this.setSearchString();
         }
     }
 
-    handleResume() {
+    setSearchString() {
         let str = this.state.searchString;
-        console.log("RESUME BASILDI", str);
+        console.log("Streaming the tweets for:", str);
         fetch("/setSearchString",
             {
                 method: "POST",
@@ -67,9 +67,9 @@ class HomePage extends React.Component {
         socket.on('connect', () => {
             console.log("Socket Connected");
             socket.on("tweets", data => {
-                console.log("hocam", data);
-                let newList = [data].concat(this.state.items.slice(0, 4));
-                console.log("NE MANA", newList);
+                console.log("Raw Data", data);
+                let newList = [data].concat(this.state.items.slice(0, this.state.tweetBufferLimit-1));
+                console.log("newList", newList);
                 this.setState({ items: newList });
             });
         });
@@ -102,6 +102,7 @@ class HomePage extends React.Component {
                     <input type="text"
                            name="searchString"
                            className="searchString"
+                           autoComplete="off"
                            value={this.state.searchString}
                            onChange={this.handleTextEditing}
                            onKeyPress={this.handleKeyPress}

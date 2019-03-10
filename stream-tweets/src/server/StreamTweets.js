@@ -15,9 +15,6 @@ module.exports = (app, io) => {
     app.locals.showTweets = true;
     app.locals.showRetweets = false;
 
-    /**
-     * Resumes twitter stream.
-     */
     const stream = () => {
         console.log('Streaming the tweets for \"' + app.locals.searchString + '\"');
         twitter.stream('statuses/filter', { track: app.locals.searchString }, (stream) => {
@@ -26,7 +23,6 @@ module.exports = (app, io) => {
             });
 
             stream.on('error', (error) => {
-                //console.log("HATA VAR HOCEAM");
                 //console.log(error);
             });
 
@@ -37,6 +33,12 @@ module.exports = (app, io) => {
     // EMITTER
     const sendMessage = (msg) => {
 
+        if (!msg.text.toLowerCase().includes(app.locals.searchString.toLowerCase())) {
+            console.log("DOES NOT CONTAIN:", app.locals.searchString);
+            console.log(msg.text);
+            return;
+        }
+
         if (itIsARetweet(msg.text) && !app.locals.showRetweets) {
             return;
         }
@@ -44,8 +46,8 @@ module.exports = (app, io) => {
         if (!itIsARetweet(msg.text) && !app.locals.showTweets) {
             return;
         }
-        console.log(msg.text);
-        console.log(app.locals.searchString);
+        //console.log(msg.text);
+        //console.log(app.locals.searchString);
         socketConn.emit("tweets", msg);
     };
 
@@ -76,8 +78,8 @@ module.exports = (app, io) => {
         console.log("showTweets:", app.locals.showTweets);
         console.log("showRetweets:", app.locals.showRetweets);
         twitterStream.destroy();
-        res.send("stream stopped successfully");
-        setTimeout(function(){ stream(); }, 300);
+        twitter.destroy();
+        stream();
     });
 
     // EDIT SEARCH WORD
@@ -85,10 +87,6 @@ module.exports = (app, io) => {
         app.locals.searchString = req.body.str;
         console.log("Search string edited to =>", app.locals.searchString);
         twitterStream.destroy();
-        setTimeout(function(){
-            console.log("Daha yeni geldi");
-            stream();
-        },
-        2000);
+        stream();
     });
 };
