@@ -85,18 +85,10 @@ module.exports = (app, io) => {
         app.locals.searchString = req.body.str;
         console.log("Search string edited to =>", app.locals.searchString);
         twitterStream.destroy();
-        setTimeout(function(){ stream(); }, 300);
-    });
-
-    // PAUSE
-    app.post('/pause', (req, res) => {
-        console.log('Pause');
-        twitterStream.destroy();
-    });
-
-    // RESUME
-    app.post('/resume', (req, res) => {
-        console.log('Resuming twitter stream');
-        stream();
+        setTimeout(function(){
+            console.log("Daha yeni geldi");
+            stream();
+        },
+        2000);
     });
 };

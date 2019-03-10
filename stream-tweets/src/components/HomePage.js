@@ -1,14 +1,14 @@
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import socketIOClient from "socket.io-client";
 import TweetBox from './TweetBox';
+import loadingLogo from '../loadingIcon.svg';
 
 class HomePage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             items: [],
-            searchString: "javaScript",
+            searchString: "javascript",
             showTweets: true,
             showRetweets: false,
         };
@@ -17,7 +17,6 @@ class HomePage extends React.Component {
         this.handleOptionChange = this.handleOptionChange.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handleResume = this.handleResume.bind(this);
-        this.handlePause = this.handlePause.bind(this);
     }
 
     handleTextEditing(e) {
@@ -63,16 +62,6 @@ class HomePage extends React.Component {
             });
     }
 
-    handlePause() {
-        fetch("/pause",
-            {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-    }
-
     componentDidMount() {
         const socket = socketIOClient('http://localhost:3000/');
         socket.on('connect', () => {
@@ -94,15 +83,18 @@ class HomePage extends React.Component {
     render() {
         let items = this.state.items;
 
-        let cards = <ReactCSSTransitionGroup
-            transitionName="example"
-            transitionEnterTimeout={5000}
-            transitionAppear={true}
-            transitionAppearTimeout={2000}
-            transitionLeaveTimeout={900}>
-
-            <div>babybybybyb</div>
-        </ReactCSSTransitionGroup>;
+        let tweetBoxes = [];
+        if (!this.state.showTweets && !this.state.showRetweets) {
+            tweetBoxes = "PAUSED";
+        }
+        else if (!items || items.length === 0) {
+            tweetBoxes = <img src={loadingLogo} className="loadingLogo" alt="Loading Tweets"/>;
+        }
+        else {
+            for (let i = 0; i < items.length; i++) {
+                tweetBoxes.push(<TweetBox key={i} data={items[i]} />);
+            }
+        }
 
         return (
             <div className="row">
@@ -133,9 +125,7 @@ class HomePage extends React.Component {
                     </label>
                 </div>
                 <div className="streamSection">
-                    {items.map((x, i) =>
-                        <TweetBox key={i} data={x} />
-                    )}
+                    {tweetBoxes}
                 </div>
             </div>
         );
