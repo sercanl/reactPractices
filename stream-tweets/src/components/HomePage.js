@@ -111,6 +111,7 @@ class HomePage extends React.Component {
                     <label className="showTweets">
                         <input type="checkbox"
                                name="showTweets"
+                               className="showTweetsCheckbox"
                                checked={this.state.showTweets}
                                onChange={this.handleOptionChange}
                         />
@@ -119,6 +120,7 @@ class HomePage extends React.Component {
                     <label className="showRetweets">
                         <input type="checkbox"
                                name="showRetweets"
+                               className="showRetweetsCheckbox"
                                checked={this.state.showRetweets}
                                onChange={this.handleOptionChange}
                         />
