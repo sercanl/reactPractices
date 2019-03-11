@@ -1,5 +1,5 @@
 import React from 'react';
-import '../TweetBox.scss';
+import '../stylesheets/TweetBox.scss';
 
 class TweetBox extends React.Component {
     render() {
