@@ -63,7 +63,7 @@ class HomePage extends React.Component {
     }
 
     componentDidMount() {
-        const socket = socketIOClient('http://localhost:3000/');
+        const socket = socketIOClient();
         socket.on('connect', () => {
             console.log("Socket Connected");
             socket.on("tweets", data => {
