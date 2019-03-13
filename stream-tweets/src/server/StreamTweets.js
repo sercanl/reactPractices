@@ -10,15 +10,33 @@ module.exports = (app, io) => {
         access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
         access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
     });
+    const tweetLimit = 8;
+    app.locals.searchString = '';
+    app.locals.showTweets = null;
+    app.locals.showRetweets = null;
+    app.locals.EmittedTweetsNumber = 0;
 
-    app.locals.searchString = 'javascript';
-    app.locals.showTweets = true;
-    app.locals.showRetweets = false;
+    setInterval(function() {
+        app.locals.EmittedTweetsNumber = 0;
+    }, 3000);
 
     const stream = () => {
+
+        if (app.locals.searchString.length === 0) {
+            console.log("EMPTY SEARCH STRING");
+            return;
+        }
+
+        if (app.locals.showTweets === null) {
+            console.log("WAIT WAIT WAIT WAIT WAIT WAIT WAIT");
+            return;
+        }
+
         console.log('Streaming the tweets for \"' + app.locals.searchString + '\"');
         twitter.stream('statuses/filter', { track: app.locals.searchString }, (stream) => {
             stream.on('data', (tweet) => {
+                app.locals.EmittedTweetsNumber = app.locals.EmittedTweetsNumber + 1;
+                console.log("TWEET NUMBER", app.locals.EmittedTweetsNumber);
                 sendMessage(tweet);
             });
 
@@ -32,6 +50,10 @@ module.exports = (app, io) => {
 
     // EMITTER
     const sendMessage = (msg) => {
+
+        if (app.locals.EmittedTweetsNumber > tweetLimit) {
+            return;
+        }
 
         if (itIsARetweet(msg.text) && !app.locals.showRetweets) {
             return;
@@ -51,35 +73,20 @@ module.exports = (app, io) => {
     // CONNECT
     io.on("connection", socket => {
         socketConn = socket;
-        //stream();
         socket.on("connection", () => console.log("Client connected"));
         socket.on("disconnect", () => console.log("Client disconnected"));
     });
 
-    // SET SHOW TWEETS
-    app.post('/setShowTweets', (req) => {
+    // SET FILTER
+    app.post('/setFilter', (req) => {
 
-        switch(req.body.option) {
-            case "showTweets":
-                app.locals.showTweets = req.body.value;
-                break;
-            case "showRetweets":
-                app.locals.showRetweets = req.body.value;
-                break;
-        }
+        app.locals.searchString = req.body._searchString;
+        app.locals.showTweets = req.body._showTweets;
+        app.locals.showRetweets = req.body._showRetweets;
 
+        console.log("Search string edited to =>", app.locals.searchString);
         console.log("showTweets:", app.locals.showTweets);
         console.log("showRetweets:", app.locals.showRetweets);
-        if (twitterStream) {
-            twitterStream.destroy();
-        }
-        stream();
-    });
-
-    // EDIT SEARCH WORD
-    app.post('/setSearchString', (req) => {
-        app.locals.searchString = req.body.str;
-        console.log("Search string edited to =>", app.locals.searchString);
         if (twitterStream) {
             twitterStream.destroy();
         }

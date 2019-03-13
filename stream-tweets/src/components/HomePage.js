@@ -1,5 +1,4 @@
 import React from 'react';
-import socketIOClient from "socket.io-client";
 import TweetBox from './TweetBox';
 import loadingLogo from '../loadingIcon.svg';
 
@@ -10,7 +9,7 @@ class HomePage extends React.Component {
             items: [],
             searchString: "javascript",
             showTweets: true,
-            showRetweets: false,
+            showRetweets: true,
             tweetBufferLimit: 7
         };
 
@@ -29,15 +28,31 @@ class HomePage extends React.Component {
             [name]: e.target.checked,
             items: []
         });
-        fetch("/setShowTweets",
+
+        if (name === "showTweets") {
+            this.setFilter(this.state.searchString, e.target.checked, this.state.showRetweets);
+        }
+        else if (name === "showRetweets") {
+            this.setFilter(this.state.searchString, this.state.showTweets, e.target.checked);
+        }
+    }
+
+    setFilter(searchStringVal, showTweetsVal, showRetweetsVal) {
+
+        console.log("SearchString:", searchStringVal);
+        console.log("Tweets:", showTweetsVal);
+        console.log("Retweets:", showRetweetsVal);
+
+        fetch("/setFilter",
             {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    option: name,
-                    value: e.target.checked
+                    _searchString: searchStringVal,
+                    _showTweets: showTweetsVal,
+                    _showRetweets: showRetweetsVal
                 })
             });
     }
@@ -45,34 +60,30 @@ class HomePage extends React.Component {
     handleKeyPress(e) {
         if (e.key === 'Enter') {
             this.setState({ items: [] });
-            this.setSearchString();
+            this.setFilter(this.state.searchString, this.state.showTweets, this.state.showRetweets);
         }
     }
 
-    setSearchString() {
-        let str = this.state.searchString;
-        console.log("Streaming the tweets for:", str);
-        fetch("/setSearchString",
-            {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ str })
-            });
-    }
-
     componentDidMount() {
-        const socket = socketIOClient();
+        let io = require('socket.io-client');
+        //let socket = io.connect('http://192.168.0.101:3000/', {
+        let socket = io.connect('http://localhost:3000/', {
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax : 5000,
+            reconnectionAttempts: 99999
+        });
         socket.on('connect', () => {
             console.log("Socket Connected");
+            this.setFilter(this.state.searchString, this.state.showTweets, this.state.showRetweets);
             socket.on("tweets", data => {
-                console.log("Raw Data", data);
+                //console.log("Raw Data", data);
                 let newList = [data].concat(this.state.items.slice(0, this.state.tweetBufferLimit-1));
-                console.log("newList", newList);
+                //console.log("newList", newList);
                 this.setState({ items: newList });
             });
         });
+
         socket.on('disconnect', () => {
             socket.off("tweets");
             socket.removeAllListeners("tweets");
