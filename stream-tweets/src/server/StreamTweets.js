@@ -18,7 +18,7 @@ module.exports = (app, io) => {
 
     setInterval(function() {
         app.locals.EmittedTweetsNumber = 0;
-    }, 3000);
+    }, 7000);
 
     const stream = () => {
 

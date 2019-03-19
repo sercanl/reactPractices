@@ -66,7 +66,7 @@ class HomePage extends React.Component {
 
     componentDidMount() {
         let io = require('socket.io-client');
-        //let socket = io.connect('http://192.168.0.101:3000/', {
+        //let socket = io.connect('http://192.168.0.104:3000/', {
         let socket = io.connect('http://localhost:3000/', {
             reconnection: true,
             reconnectionDelay: 1000,
