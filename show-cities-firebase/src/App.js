@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import fire from './fire';
 import './App.css';
-import Header from './components/Header/Header';
-import Footer from './components/Footer/Footer';
-
 
 class App extends Component {
   constructor(props) {
@@ -79,7 +76,7 @@ class App extends Component {
     }).then(function() {
         that.loadCities();
     });
-  }
+  };
   addCity = e => {
     e.preventDefault();
     const db = fire.firestore();
@@ -90,11 +87,10 @@ class App extends Component {
         innbyggere: this.state.innbyggere
     });
     this.loadCities();
-  }
+  };
   render() {
     return (
         <div className="App">
-            <Header />
             <table>
                 {
                     this.state.cities.map(
