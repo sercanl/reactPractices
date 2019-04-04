@@ -1,0 +1,28 @@
+.App {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 25%;
+  margin-top: 5%; }
+
+.citiesTable {
+  width: 350px; }
+
+.formTable {
+  width: 350px; }
+
+.deleteLogo {
+  width: 25px;
+  height: 25px; }
+
+.citiesDiv {
+  display: flex;
+  flex-wrap: wrap;
+  width: 350px; }
+
+.deleteButtonDiv {
+  margin-right: 5px;
+  width: 30px; }
+
+.cityDiv {
+  margin-right: 5px;
+  width: 100px; }
