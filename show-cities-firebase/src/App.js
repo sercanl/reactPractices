@@ -17,6 +17,7 @@ class App extends Component {
                   population: ""
               }
           ],
+          sortASC: true,
           maxID: -1
       };
       this.loadCities.bind(this);
@@ -43,7 +44,6 @@ class App extends Component {
             max = doc.data().id;
         });
     }).then(function() {
-        console.log(max);
         that.setState({
             maxID: max
         });
@@ -54,7 +54,8 @@ class App extends Component {
       let dbCollection = this.returnCollection(collectionName);
       let arrEl = [];
       let that = this;
-      dbCollection.orderBy("population").get().then(function(querySnapshot) {
+
+      dbCollection.orderBy("population", "asc").get().then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
               console.log(doc.data());
               arrEl.push(doc.data());
@@ -120,34 +121,71 @@ class App extends Component {
     this.updateMaxID();
   };
 
+  toggleSort() {
+    this.setState({
+        sortASC: !this.state.sortASC
+    });
+  }
+
+  createCitiesTable() {
+      let cities = [];
+
+      if (this.state.sortASC) {
+          for (let i = 0; i < this.state.cities.length; i++) {
+              let city = this.state.cities[i];
+              cities.push(
+                  <div key={city.id} className="citiesDiv">
+                      <div className="deleteButtonDiv" onClick={this.deleteCity(city.id)} value={city.id}>
+                          <img src={deleteLogo} className="deleteLogo" alt="Delete City"/>
+                      </div>
+                      <div className="cityDiv">{city.city}</div>
+                      <div className="innbyggereDiv">{city.population}</div>
+                  </div>
+              )
+          }
+      }
+      else {
+          for (let i = this.state.cities.length - 1; i > -1; i--) {
+              let city = this.state.cities[i];
+              cities.push(
+                  <div key={city.id} className="citiesDiv">
+                      <div className="deleteButtonDiv" onClick={this.deleteCity(city.id)} value={city.id}>
+                          <img src={deleteLogo} className="deleteLogo" alt="Delete City"/>
+                      </div>
+                      <div className="cityDiv">{city.city}</div>
+                      <div className="innbyggereDiv">{city.population}</div>
+                  </div>
+              )
+          }
+      }
+      return cities;
+  }
+
   render() {
+
+    let sortButton = "";
+    if (this.state.sortASC) {
+        sortButton = <button onClick={() => this.toggleSort()}>&darr;</button>;
+    }
+    else {
+        sortButton = <button onClick={() => this.toggleSort()}>&uarr;</button>;
+    }
+
     return (
         <div className="App">
-            <div className="citiesTable">
-                    {
-                        this.state.cities.map(
-                            city => (
-                                <div key={city.id} className="citiesDiv">
-                                    <div className="deleteButtonDiv" onClick={this.deleteCity(city.id)} value={city.id}>
-                                        <img src={deleteLogo} className="deleteLogo" alt="Delete City"/>
-                                    </div>
-                                    <div className="cityDiv">{city.city}</div>
-                                    <div className="innbyggereDiv">{city.population}</div>
-                                </div>
-                            )
-                        )
-                    }
-            </div>
             <div className="formTable">
                 <form onSubmit={ this.addCity }>
                     <input type="text" name="city" placeholder="city" onChange={this.updateInput} value={this.state.city || ''} />
                     <input type="text" name="population" placeholder="population" onChange={this.updateInput} value={this.state.population || ''} />
                     <br />
+                    <button onClick={this.deleteAllDocuments}>Delete all</button>
                     <button type="submit">Submit</button>
 
                 </form>
-                <button onClick={this.deleteAllDocuments}>Delete all</button>
-                <button onClick={this.loadCities}>Show</button>
+                {sortButton}
+            </div>
+            <div className="citiesTable">
+                {this.createCitiesTable()}
             </div>
         </div>
     );
