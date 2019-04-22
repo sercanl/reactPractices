@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import uuid from 'uuid';
 import fire from './fire';
 import './App.css';
 import './stylesheets/app.scss';
@@ -110,7 +111,6 @@ class App extends Component {
 
     let dbCollection = this.returnCollection(collectionName);
     let population_int = parseInt(this.state.population);
-    console.log("burada", this.state.maxID);
     let id_int = parseInt(this.state.maxID+1);
     dbCollection.add({
         id: id_int,
@@ -119,6 +119,9 @@ class App extends Component {
     });
     this.loadCities();
     this.updateMaxID();
+
+    this.setState({["city"]: "" });
+    this.setState({["population"]: "" });
   };
 
   toggleSort() {
@@ -165,24 +168,25 @@ class App extends Component {
 
     let sortButton = "";
     if (this.state.sortASC) {
-        sortButton = <button onClick={() => this.toggleSort()}>&darr;</button>;
+        sortButton = <button key={uuid()} onClick={() => this.toggleSort()}>&darr;</button>;
     }
     else {
-        sortButton = <button onClick={() => this.toggleSort()}>&uarr;</button>;
+        sortButton = <button key={uuid()} onClick={() => this.toggleSort()}>&uarr;</button>;
     }
 
     return (
         <div className="App">
             <div className="formTable">
                 <form onSubmit={ this.addCity }>
-                    <input type="text" name="city" placeholder="city" onChange={this.updateInput} value={this.state.city || ''} />
-                    <input type="text" name="population" placeholder="population" onChange={this.updateInput} value={this.state.population || ''} />
+                    <input required type="text" name="city" placeholder="city"
+                           onChange={this.updateInput} value={this.state.city || ''} />
+                    <input required type="number" name="population" placeholder="population"
+                           onChange={this.updateInput} value={this.state.population || ''} />
                     <br />
-                    <button onClick={this.deleteAllDocuments}>Delete all</button>
+                    <button key={uuid()} type="button" onClick={this.deleteAllDocuments}>Delete all</button>
                     <button type="submit">Submit</button>
-
+                    {sortButton}
                 </form>
-                {sortButton}
             </div>
             <div className="citiesTable">
                 {this.createCitiesTable()}
