@@ -3,7 +3,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 let config = {
-    apiKey: "AIzaSyA4ixj7ItE70jzJkAMB_BD7HBYpIn7nG3g",
+    apiKey: "",
     authDomain: "cities-62a97.firebaseapp.com",
     databaseURL: "https://cities-62a97.firebaseio.com",
     projectId: "cities-62a97",
