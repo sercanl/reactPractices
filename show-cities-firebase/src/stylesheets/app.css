@@ -8,8 +8,7 @@
   width: 350px; }
 
 .formTable {
-  width: 350px;
-  margin-bottom: 10px; }
+  width: 350px; }
 
 .deleteLogo {
   width: 25px;
@@ -22,13 +21,8 @@
 
 .deleteButtonDiv {
   margin-right: 5px;
-  width: 30px;
-  cursor: pointer; }
+  width: 30px; }
 
 .cityDiv {
   margin-right: 5px;
   width: 100px; }
-
-.innbyggereDiv {
-  width: 100px;
-  text-align: right; }
