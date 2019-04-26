@@ -183,8 +183,8 @@ class App extends Component {
                     <input required type="number" name="population" placeholder="population"
                            onChange={this.updateInput} value={this.state.population || ''} />
                     <br />
-                    <button key={uuid()} type="button" onClick={this.deleteAllDocuments}>Delete all</button>
-                    <button type="submit">Submit</button>
+                    <button type="button" className="deleteAllButton" key={uuid()} onClick={this.deleteAllDocuments}>Delete all</button>
+                    <button type="submit" className="submitButton" >Submit</button>
                     {sortButton}
                 </form>
             </div>
